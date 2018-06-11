@@ -4,7 +4,6 @@
     {% load static %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'table.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'transparentTable.css' %}" />
     <title></title>
 </head>
 <body>
@@ -13,19 +12,17 @@
 <form id="upload_form" method="post">
 {% csrf_token %}
 <table class="myTable">
-    <thead><th>File Name</th><th>Date</th><th>Business</th><th>Total</th><th>Charged</th><th>Category</th></thead>
+    <thead><th>File Name</th><th>Date</th><th colspan=2>Business</th><th>Total</th><th>Charged</th><th>Category</th></thead>
     {% for ex in missing %}
         <tr>
-            <td>{{ ex.file_name }}</td>
+            <td>{{ ex.file.file_name }}</td>
             <td>{{ ex.date|date:"d/m/Y" }}</td>
-            <td><table class="transparentTable"><tr>
-                <td>{{ ex.name_id }}</td>
-                <td><input type="text" name="{{ ex.id }}_txt"></td>
-            </tr></table></td>
+            <td>{{ ex.name.name }}</td>
+            <td><input type="text" name="{{ ex.id }}_name"></td>
             <td>{{ ex.total }}</td>
             <td>{{ ex.charge }}</td>
             <td>
-                <select name="{{ ex.id }}">
+                <select name="{{ ex.id }}_cat">
                     {% for cat in categories %}
                         <option value="{{ cat.id }}" {% if cat.id == 0 %} selected="true" {% endif %}>{{ cat.name }}</option>
                     {% endfor %}
@@ -35,7 +32,7 @@
     {% endfor %}
     <tfoot>
         <tr>
-            <td/><td/><td>Total: </td><td/><td>{{ total | floatformat:"-2" }}</td><td/>
+            <td/><td/><td colspan=2>Total: </td><td/><td>{{ total | floatformat:"-2" }}</td><td/>
         </tr>
     </tfoot>
 </table>

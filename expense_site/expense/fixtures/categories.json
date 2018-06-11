@@ -1,0 +1,14 @@
+[
+  {
+    "model": "expense.category",
+    "pk": 0,
+    "fields": {}
+  },
+  {
+    "model": "expense.category",
+    "pk": -1,
+    "fields": {
+      "name": "IGNORE"
+    }
+  }
+]

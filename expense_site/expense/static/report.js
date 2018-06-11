@@ -15,7 +15,7 @@ if (table != null) {
 function showDetails(tableCell) {
     if (tableCell.id) {
 
-        getParams= `cat=${tableCell.id.split("_")[0]}&monthsback=${tableCell.id.split("_")[1]}`
+        getParams = `cat=${tableCell.id.split("_")[0]}&monthsback=${tableCell.id.split("_")[1]}`
         document.getElementById('details_view').src = '/expense/details?'+getParams
 
     }

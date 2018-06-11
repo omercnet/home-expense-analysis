@@ -1,9 +1,10 @@
 __author__ = 'maord'
 
-import sqlite3
+import os
 import sys
+import sqlite3
 
-from Consts import *
+from Consts import consts
 import CreditCardSheet
 
 
@@ -13,7 +14,7 @@ def main(argv):
     for fn in filter(os.path.isfile, os.listdir(consts.card_sheets_folder_path)):
         c = sql.execute("SELECT * FROM files where file_name = ?;", (fn,))
         if not len(c.fetchall()):
-            print (fn)
+            print(fn)
             cc = CreditCardSheet.CreditCardSheet(fn)
             cc.read_transactions()
             cc.finalize()

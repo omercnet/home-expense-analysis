@@ -1,4 +1,4 @@
-# coding= utf-8
+# coding = utf-8
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
@@ -12,12 +12,14 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.db.models import Sum
-import re
 
 
 class Category(models.Model):
-    id = models.AutoField(blank=False, primary_key=True )
+    id = models.AutoField(blank=False, primary_key=True)
     name = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "categories"
 
     def __str__(self):
         if self.name:
@@ -25,14 +27,13 @@ class Category(models.Model):
         else:
             return 'None'
 
-    class Meta:
-        managed = False
-        db_table = 'category'
-
 
 class Files(models.Model):
     id = models.IntegerField(blank=True, primary_key=True)
     file_name = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "files"
 
     def __str__(self):
         return self.file_name
@@ -45,27 +46,23 @@ class Files(models.Model):
 
     get_file_expenses_link.allow_tags = True
 
-    class Meta:
-        managed = False
-        db_table = 'files'
-
 
 class Names(models.Model):
     name = models.TextField(blank=True, primary_key=True)
-    cat = models.ForeignKey(Category,db_column='cat')
+    cat = models.ForeignKey(Category, on_delete=models.CASCADE, default=0)
 
     class Meta:
-        managed = False
-        db_table = 'names'
+        verbose_name_plural = "names"
 
     def __str__(self):
         return self.name
 
+
 class Expense(models.Model):
     id = models.IntegerField(primary_key=True)
-    file = models.ForeignKey(Files)
+    file = models.ForeignKey(Files, on_delete=models.CASCADE)
     date = models.DateField(blank=True, null=True)
-    name = models.ForeignKey(Names, db_column='name')
+    name = models.ForeignKey(Names, on_delete=models.CASCADE)
     total = models.FloatField(blank=True, null=True)
     charge = models.FloatField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
@@ -80,11 +77,3 @@ class Expense(models.Model):
 
     def get_file_name(self):
         return self.file.file_name
-
-
-    class Meta:
-        managed = False
-        db_table = 'expense'
-
-
-

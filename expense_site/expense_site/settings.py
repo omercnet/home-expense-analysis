@@ -78,15 +78,15 @@ WSGI_APPLICATION = 'expense_site.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR,'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
-    'expense': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR,'..','expense.db'),
-    },
+    # 'expense': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, '..', 'expense.db'),
+    # },
 }
 
-DATABASE_ROUTERS = [ 'expense.DBRoute.DBRouter']
+# DATABASE_ROUTERS = ['expense.DBRoute.DBRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -127,7 +127,7 @@ LOGGING = {
         'console': {
             # logging handler that outputs log messages to terminal
             'class': 'logging.StreamHandler',
-            'level': 'DEBUG', # message level to be written to console
+            'level': 'DEBUG',  # message level to be written to console
         },
     },
     'loggers': {
@@ -137,8 +137,8 @@ LOGGING = {
             # root level logger.
             'handlers': ['console'],
             'level': 'DEBUG',
-            'propagate': False, # this tells logger to send logging message
-                                # to its parent (will send if set to True)
+            'propagate': False,  # this tells logger to send logging message
+                                 # to its parent (will send if set to True)
         },
         'django.db': {
             # django also has database level logging

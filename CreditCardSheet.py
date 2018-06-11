@@ -1,15 +1,17 @@
-# coding= utf-8
+# coding = utf-8
 __author__ = 'maord'
 
-from xml.dom import minidom as xml
-import datetime
-import sqlite3
-import sys
+import os
 import re
+import sys
+import sqlite3
+import datetime
+from xml.dom import minidom as xml
 
 import bs4
 import xlrd
-from Consts import *
+
+from Consts import consts
 
 
 class CreditEntry:
@@ -29,24 +31,21 @@ class CreditEntry:
         self._charge_number = charge_number
         self._total_charges = total_charges
 
-
-
     @staticmethod
     def factory(date, name, total, charge, notes=''):
         try:
             t = datetime.datetime.strptime(*date)
             return CreditEntry(t, name, total, charge, notes)
         except ValueError:
-            print (date[0], name, total, charge, notes, file=sys.stderr)
+            print(date[0], name, total, charge, notes, file=sys.stderr)
 
     def get_sqlite_entry_str(self):
         return r"'%s','%s',%s,%s,'%s',%d,%d" % (datetime.datetime.strftime(self._date, '%Y-%m-%d'),
-                                          self._name,
-                                          self._total_sum,
-                                          self._charge_sum,
-                                          self._notes,
-                                          self._charge_number, self._total_charges)
-
+                                                self._name,
+                                                self._total_sum,
+                                                self._charge_sum,
+                                                self._notes,
+                                                self._charge_number, self._total_charges)
 
 
 class CreditCardSheet:
@@ -58,7 +57,6 @@ class CreditCardSheet:
         c = self._sql.execute(r"INSERT INTO files (file_name) VALUES ('%s');" % os.path.basename(self._fp))
         self._file_id = c.lastrowid
 
-
     def finalize(self):
         self._sql.commit()
         self._sql.close()
@@ -66,10 +64,11 @@ class CreditCardSheet:
     def read_transactions(self):
         for trans in filter(bool, self._read_file_data()):
             try:
-                self._sql.execute(r'INSERT INTO expense (date, name, total, charge, notes,charge_number, total_charges, file_id) values (%s,%d);' %
+                self._sql.execute(r'INSERT INTO expense (date, name, total, charge, notes,charge_number, '
+                                  r'total_charges, file_id) values (%s,%d);' %
                                   (trans.get_sqlite_entry_str(), self._file_id))
-            except:
-                print (trans.get_sqlite_entry_str(),file=sys.stderr)
+            except Exception:
+                print(trans.get_sqlite_entry_str(), file=sys.stderr)
 
     def _read_file_data(self):
 
@@ -85,9 +84,11 @@ class CreditCardSheet:
                 for cell in row:
                     row_l.append(cell.value)
                 if r'סכום מקור' in map(lambda h: h.value, header):
-                    rows.append(CreditEntry.factory((row_l[0], '%d/%m/%Y'), row_l[2], str(row_l[4]), str(row_l[6]), row_l[7]))
+                    rows.append(CreditEntry.factory((row_l[0], '%d/%m/%Y'), row_l[2], str(row_l[4]),
+                                str(row_l[6]), row_l[7]))
                 else:
-                    rows.append(CreditEntry.factory((row_l[0], '%d/%m/%Y'), row_l[2], str(row_l[5]), str(row_l[6]), row_l[7]))
+                    rows.append(CreditEntry.factory((row_l[0], '%d/%m/%Y'), row_l[2], str(row_l[5]),
+                                str(row_l[6]), row_l[7]))
             return rows
         else:
             try:
@@ -102,7 +103,7 @@ class CreditCardSheet:
                     if len(cells) == 6:
                         for cell in cells:
                             row_l.append(cell.childNodes[0].data.strip())
-                        rows.append(CreditEntry.factory((row_l[0], '%d/%m/%Y'), *(row_l[1:4]+[row_l[5]])))
+                        rows.append(CreditEntry.factory((row_l[0], '%d/%m/%Y'), * (row_l[1:4] + [row_l[5]])))
                 return rows
 
             except UnicodeDecodeError:
@@ -117,7 +118,5 @@ class CreditCardSheet:
                             row_l.append(cell.childNodes[0].data.strip())
                         else:
                             row_l.append('')
-                    #print row_l
                     rows.append(CreditEntry.factory((row_l[0][:11], '%Y-%m-%dT'), row_l[2], row_l[5], *row_l[6:]))
                 return rows
-                
