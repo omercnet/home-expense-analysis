@@ -1,16 +1,11 @@
 
-from django.shortcuts import render
-
-# Create your views here.
-from .models import expense, Category, Names
-from django.db.models import Sum, Case, When, F, Q, FloatField
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-import sys
-import os
-from expense_site import settings
-sys.path.append(os.path.join(settings.BASE_DIR,'..'))
-from Consts import consts
+
+from django.shortcuts import render
+from .models import Expense, Category, Names
+from django.db.models import Sum, Case, When, F, FloatField
+from django.conf import settings
 
 
 def _top_of_months_ago(months):
@@ -19,7 +14,7 @@ def _top_of_months_ago(months):
 
 def details(request):
     return render(request, 'details/details.html',
-                  {'details': (expense.objects.filter(date__gte=_top_of_months_ago(int(request.GET['monthsback'])),
+                  {'details': (Expense.objects.filter(date__gte=_top_of_months_ago(int(request.GET['monthsback'])),
                                                       name__cat__id=int(request.GET['cat'])).order_by('date')
                                               .exclude(name__cat__id=-1))
                    })
@@ -42,13 +37,16 @@ def missing(request):
             if v['cat'] == 0:
                 continue
 
-            ex = expense.objects.get(id=k)
+            ex = Expense.objects.get(pk=k)
 
             if v['cat'] == "-1":
                 namesuff = "IGNORE"
             else:
                 namesuff = v['name']
-            new_name = "{}_{}".format(ex.name.name, namesuff)
+            if namesuff:
+                new_name = "{}_{}".format(ex.name.name, namesuff)
+            else:
+                new_name = ex.name.name
             name, created = Names.objects.get_or_create(name=new_name)
             name.cat = Category.objects.get(pk=v['cat'])
             name.save()
@@ -56,7 +54,7 @@ def missing(request):
             ex.name = name
             ex.save()
 
-    last_month_list = expense.objects.filter(name__cat__id=0)
+    last_month_list = Expense.objects.filter(name__cat__pk=0)
 
     return render(request, 'missing/missing.html',
                   {'missing': last_month_list,
@@ -65,7 +63,7 @@ def missing(request):
 
 
 def report(request):
-    sums = Category.objects.filter(Q(id__gt=0)).annotate(
+    sums = Category.objects.filter(pk__gt=0).annotate(
         lastMonth=Sum(Case(When(names__expense__date__gte=_top_of_months_ago(1),
                                 names__expense__charge_number=1,
                                 then=F('names__expense__charge') * F('names__expense__total_charges')),
@@ -87,7 +85,7 @@ def report(request):
                           output_field=FloatField()))
     )
 
-    totals = expense.objects.filter(~Q(id=-1)).aggregate(
+    totals = Expense.objects.all().aggregate(
         lastMonth=Sum(Case(When(date__gte=_top_of_months_ago(1),
                                 charge_number=1,
                                 then=F('charge') * F('total_charges')), output_field=FloatField())),
@@ -101,7 +99,7 @@ def report(request):
                                charge_number=1,
                                then=F('charge') * F('total_charges')), output_field=FloatField())))
 
-    not_categorized = expense.objects.filter(~Q(id=-1)).aggregate(
+    not_categorized = Expense.objects.filter(name__cat__pk=0).aggregate(
         lastMonth=totals['lastMonth'] - Sum(Case(When(date__gte=_top_of_months_ago(1),
                                                       charge_number=1,
                                                       name__cat__isnull=False,
@@ -131,5 +129,5 @@ def report(request):
                   {'sums': sums,
                    'not_categorized': not_categorized,
                    'totals': totals,
-                   'income': consts.monthly_income,
+                   'income': settings.MONTHLY_INCOME,
                    })

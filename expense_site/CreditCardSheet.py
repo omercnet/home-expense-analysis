@@ -8,10 +8,10 @@ import sqlite3
 import datetime
 from xml.dom import minidom as xml
 
+from django.conf.settings import consts
+
 import bs4
 import xlrd
-
-from Consts import consts
 
 
 class CreditEntry:

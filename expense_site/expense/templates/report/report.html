@@ -25,10 +25,10 @@
     </tr>
     {% for cat in sums %}
         <tr>
-            <td id="{{ cat.id }}_12">{{ cat.lastYear | div:12 | floatformat:"-2" }}</td>
-            <td id="{{ cat.id }}_6">{{ cat.lastHalf | div:6 | floatformat:"-2" }}</td>
-            <td id="{{ cat.id }}_3">{{ cat.lastQuarter | div:3 | floatformat:"-2" }}</td>
-            <td id="{{ cat.id }}_1">{{ cat.lastMonth | floatformat:"-2" }}</td>
+            <td id="{{ cat.pk }}_12">{{ cat.lastYear | div:12 | floatformat:"-2" }}</td>
+            <td id="{{ cat.pk }}_6">{{ cat.lastHalf | div:6 | floatformat:"-2" }}</td>
+            <td id="{{ cat.pk }}_3">{{ cat.lastQuarter | div:3 | floatformat:"-2" }}</td>
+            <td id="{{ cat.pk }}_1">{{ cat.lastMonth | floatformat:"-2" }}</td>
             <td>{{ cat.name }}</td>
         </tr>
     {% endfor %}

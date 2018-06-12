@@ -15,7 +15,7 @@ from django.db.models import Sum
 
 
 class Category(models.Model):
-    id = models.AutoField(blank=False, primary_key=True)
+    # id = models.AutoField(blank=False, primary_key=True)
     name = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -29,7 +29,7 @@ class Category(models.Model):
 
 
 class Files(models.Model):
-    id = models.IntegerField(blank=True, primary_key=True)
+    # id = models.IntegerField(blank=True, primary_key=True)
     file_name = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -59,8 +59,8 @@ class Names(models.Model):
 
 
 class Expense(models.Model):
-    id = models.IntegerField(primary_key=True)
-    file = models.ForeignKey(Files, on_delete=models.CASCADE)
+    # id = models.IntegerField(primary_key=True)
+    file = models.ForeignKey(Files, on_delete=models.CASCADE, null=True)
     date = models.DateField(blank=True, null=True)
     name = models.ForeignKey(Names, on_delete=models.CASCADE)
     total = models.FloatField(blank=True, null=True)

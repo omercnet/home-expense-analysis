@@ -30,7 +30,7 @@ def function_creator(i):
 
 
 class ExpenseAdmin(admin.ModelAdmin):
-    list_display = ('get_file_name', 'date', 'name_id', 'total', 'charge',
+    list_display = ('date', 'name_id', 'total', 'charge',
                     'charge_number', 'total_charges', 'notes', 'get_cat')
     list_filter = ['date', 'name__cat__name']
     search_fields = ['name__name', 'file__file_name', 'notes']
