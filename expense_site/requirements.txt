@@ -1,4 +1,4 @@
-Django==2.0.6
+Django==2.2.13
 django-mathfilters==0.4.0
 python-dateutil==2.7.3
 pytz==2018.4
