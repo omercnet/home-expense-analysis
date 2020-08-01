@@ -5,4 +5,5 @@ venv/
 *.db
 *.har
 __pycache__
-/LocalConsts.py
+.env
+/static

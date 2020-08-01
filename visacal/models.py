@@ -1,12 +1,16 @@
 from django.db import models
 from expense.models import Expense
+from django.contrib.auth.models import User
+
+from encrypted_model_fields.fields import EncryptedCharField
 
 
 class CalUser(models.Model):
     # TODO: Encrypt these fields
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     username = models.CharField(max_length=250)
-    password = models.CharField(max_length=250)
-    token = models.CharField(max_length=500, null=True)
+    password = EncryptedCharField(max_length=250)
+    token = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         return self.username
@@ -32,5 +36,5 @@ class CalCard(models.Model):
 
 
 class CalExpense(models.Model):
-    expense = models.OneToOneField(Expense, on_delete=models.CASCADE, primary_key=True)
-    id = models.IntegerField()
+    expense = models.OneToOneField(Expense, on_delete=models.CASCADE)
+    card = models.ForeignKey(CalCard, on_delete=models.CASCADE)

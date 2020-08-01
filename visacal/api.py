@@ -78,11 +78,14 @@ class CalApi:
         to_date = to_date.strftime('%d/%m/%Y')
 
         if not from_date:
-            from_date = datetime.now().replace(Aday=1)
+            from_date = datetime.now().replace(day=1)
         from_date = from_date.strftime('%d/%m/%Y')
 
         expenses = self.get('CalTransactions/{}'.format(card.cal_id), {'FromDate': from_date, 'ToDate': to_date})
-        logger.debug(expenses)
+
+        if not expenses['Transactions']:
+            return
+
         for cal_ex in expenses['Transactions']:
             try:
                 CalExpense.objects.get(id=cal_ex['Id'])
@@ -101,6 +104,5 @@ class CalApi:
                              charge_number=cal_ex['CurrentPayment'],
                              total_charges=cal_ex['TotalPayments'])
                 ex.save()
-                ex.refresh_from_db()
-                calexpense = CalExpense(id=cal_ex['Id'], expense=ex)
+                calexpense = CalExpense(id=cal_ex['Id'], expense=ex, card=card)
                 calexpense.save()

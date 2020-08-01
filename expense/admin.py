@@ -1,15 +1,7 @@
 from django.contrib import admin
 from django.db import models
 from django.forms import TextInput, Textarea
-from .models import Files, Expense, Category, Names
-
-
-class FilesAdmin(admin.ModelAdmin):
-    list_display = ['get_file_expenses_link', 'file_name', 'get_file_total']
-    ordering = ['-file_name']
-
-
-admin.site.register(Files, FilesAdmin)
+from .models import Expense, Category, Names
 
 
 class NamesAdmin(admin.ModelAdmin):

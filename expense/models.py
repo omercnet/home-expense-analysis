@@ -11,7 +11,6 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.db.models import Sum
 
 
 class Category(models.Model):
@@ -28,25 +27,6 @@ class Category(models.Model):
             return 'None'
 
 
-class Files(models.Model):
-    # id = models.IntegerField(blank=True, primary_key=True)
-    file_name = models.TextField(blank=True, null=True)
-
-    class Meta:
-        verbose_name_plural = "files"
-
-    def __str__(self):
-        return self.file_name
-
-    def get_file_total(self):
-        return self.expense_set.aggregate(sum=Sum('charge'))['sum']
-
-    def get_file_expenses_link(self):
-        return '<a href="/admin/expense/expense/?q=%s">%s</a>' % (self.file_name, "See Details")
-
-    get_file_expenses_link.allow_tags = True
-
-
 class Names(models.Model):
     name = models.TextField(blank=True, primary_key=True)
     cat = models.ForeignKey(Category, on_delete=models.CASCADE, default=0)
@@ -60,7 +40,6 @@ class Names(models.Model):
 
 class Expense(models.Model):
     # id = models.IntegerField(primary_key=True)
-    file = models.ForeignKey(Files, on_delete=models.CASCADE, null=True)
     date = models.DateField(blank=True, null=True)
     name = models.ForeignKey(Names, on_delete=models.CASCADE)
     total = models.FloatField(blank=True, null=True)
